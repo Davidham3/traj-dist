@@ -1,3 +1,8 @@
+This repo is forked from [bguillouet/traj-dist](https://github.com/bguillouet/traj-dist).
+
+1. The precision is upgraded from float into double in geographical distance calculation in cython code.
+2. scripts/setup_traj_dist_env.sh setups a virtual environment to build and install traj-dist.
+
 # trajectory_distance
 =====================
 
