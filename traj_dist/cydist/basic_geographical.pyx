@@ -8,13 +8,14 @@ from libc.math cimport atan2
 from libc.math cimport sqrt
 from libc.math cimport fmin
 from libc.math cimport fabs
+from libc.math cimport M_PI
 
 cimport numpy as np
 import numpy as np
 
-cdef float pi = 3.14159265
-cdef float rad = pi/180.0
-cdef int R = 6378137
+cdef double pi = M_PI
+cdef double rad = pi/180.0
+cdef double R = 6378137.0
 
 cdef np.ndarray[np.float64_t,ndim=1] _spherical2Cart(double lon, double lat):
 
@@ -42,7 +43,7 @@ def c_spherical2Cart(double lon, double lat):
 
 cdef np.ndarray[np.float64_t,ndim=1] _cart2Spherical(double x, double y, double  z):
 
-    cdef r, clat, lat, lon
+    cdef double r, clat, lat, lon
 
     r=sqrt(x**2+y**2+z**2)
     clat=acos(z/r)/pi*180
@@ -54,7 +55,7 @@ cdef np.ndarray[np.float64_t,ndim=1] _cart2Spherical(double x, double y, double 
 
 def c_cart2Spherical(double  x, double  y, double  z):
 
-    cdef r, clat, lat, lon
+    cdef double r, clat, lat, lon
 
     r=sqrt(x**2+y**2+z**2)
     clat=acos(z/r)/pi*180
@@ -73,14 +74,14 @@ cdef double _great_circle_distance(double lon1,double lat1,double lon2,double la
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
 
     Returns
     -------
-    d: float
+    d: double
        Great circle distance between (lon1,lat1) and (lon2,lat2)
     """
     cdef double dLat,dLon,a,c,d
@@ -103,14 +104,14 @@ def c_great_circle_distance(double lon1,double lat1,double lon2,double lat2):
 
     Parameters
     ----------
-    param lon1: float, longitude of the first point
-    param lat1: float, latitude of the first point
-    param lon2: float, longitude of the second point
-    param lat2: float, latitude of the second point
+    param lon1: double, longitude of the first point
+    param lat1: double, latitude of the first point
+    param lon2: double, longitude of the second point
+    param lat2: double, latitude of the second point
 
     Returns
     -------
-    d: float
+    d: double
        Great circle distance between (lon1,lat1) and (lon2,lat2)
     """
     cdef double dLat,dLon,a,c,d
@@ -133,14 +134,14 @@ cdef double _initial_bearing(double lon1,double lat1,double lon2,double lat2):
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
 
     Returns
     -------
-    brng: float
+    brng: double
            Bearing between (lon1,lat1) and (lon2,lat2), in degree.
 
     """
@@ -161,14 +162,14 @@ def c_initial_bearing(double lon1,double lat1,double lon2,double lat2):
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
 
     Returns
     -------
-    brng: float
+    brng: double
            Bearing between (lon1,lat1) and (lon2,lat2), in degree.
 
     """
@@ -184,11 +185,11 @@ def c_initial_bearing(double lon1,double lat1,double lon2,double lat2):
 cdef np.ndarray[np.float64_t,ndim=1] _cross_track_point(double  lon1, double  lat1, double  lon2, double  lat2, double  lon3, double  lat3):
     '''Get the closest point on great circle path to the 3rd point
 
-    <lat1>, <lon1>: scalar float or nd-array, latitudes and longitudes in
+    <lat1>, <lon1>: scalar double or nd-array, latitudes and longitudes in
                     degree, start point of the great circle.
-    <lat2>, <lon2>: scalar float or nd-array, latitudes and longitudes in
+    <lat2>, <lon2>: scalar double or nd-array, latitudes and longitudes in
                     degree, end point of the great circle.
-    <lat3>, <lon3>: scalar float or nd-array, latitudes and longitudes in
+    <lat3>, <lon3>: scalar double or nd-array, latitudes and longitudes in
                     degree, a point away from the great circle.
 
     Return <latp>, <lonp>: latitude and longitude of point P on the great
@@ -230,11 +231,11 @@ cdef np.ndarray[np.float64_t,ndim=1] _cross_track_point(double  lon1, double  la
 def c_cross_track_point(double  lon1, double  lat1, double  lon2, double  lat2, double  lon3, double  lat3):
     '''Get the closest point on great circle path to the 3rd point
 
-    <lat1>, <lon1>: scalar float or nd-array, latitudes and longitudes in
+    <lat1>, <lon1>: scalar double or nd-array, latitudes and longitudes in
                     degree, start point of the great circle.
-    <lat2>, <lon2>: scalar float or nd-array, latitudes and longitudes in
+    <lat2>, <lon2>: scalar double or nd-array, latitudes and longitudes in
                     degree, end point of the great circle.
-    <lat3>, <lon3>: scalar float or nd-array, latitudes and longitudes in
+    <lat3>, <lon3>: scalar double or nd-array, latitudes and longitudes in
                     degree, a point away from the great circle.
 
     Return <latp>, <lonp>: latitude and longitude of point P on the great
@@ -282,16 +283,16 @@ cdef double _cross_track_distance( double lon1, double lat1, double lon2, double
 
     Parameters :
 
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
 
     Usage
     -----
-    crt: float
+    crt: double
          the (angular) c_cross_track_distance
 
     """
@@ -314,16 +315,16 @@ def c_cross_track_distance( double lon1, double lat1, double lon2, double lat2, 
 
     Parameters :
 
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
 
     Usage
     -----
-    crt: float
+    crt: double
          the (angular) c_cross_track_distance
 
     """
@@ -347,15 +348,15 @@ cdef double _along_track_distance(double crt,double lon1,double lat1,double lon3
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
-    param crt : float, c_cross_track_distance
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
+    param crt : double, c_cross_track_distance
 
     Returns
     -------
-    alt: float
+    alt: double
          The along-track distance
     """
 
@@ -375,15 +376,15 @@ def c_along_track_distance(double crt,double lon1,double lat1,double lon3,double
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
-    param crt : float, c_cross_track_distance
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
+    param crt : double, c_cross_track_distance
 
     Returns
     -------
-    alt: float
+    alt: double
          The along-track distance
     """
 
@@ -406,17 +407,17 @@ cdef double _point_to_path(double lon1,double lat1,double lon2,double lat2,doubl
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
 
     Returns
     -------
 
-    ptp : float
+    ptp : double
           The point-to-path distance between point (lon3, lat3) and path delimited by (lon1, lat1) and (lon2, lat2)
 
     """
@@ -442,17 +443,17 @@ def c_point_to_path(double lon1,double lat1,double lon2,double lat2,double lon3,
 
     Parameters
     ----------
-    param lat1: float, latitude of the first point
-    param lon1: float, longitude of the first point
-    param lat2: float, latitude of the second point
-    param lon2: float, longitude of the second point
-    param lat3: float, latitude of the third point
-    param lon3: float, longitude of the third point
+    param lat1: double, latitude of the first point
+    param lon1: double, longitude of the first point
+    param lat2: double, latitude of the second point
+    param lon2: double, longitude of the second point
+    param lat3: double, latitude of the third point
+    param lon3: double, longitude of the third point
 
     Returns
     -------
 
-    ptp : float
+    ptp : double
           The point-to-path distance between point (lon3, lat3) and path delimited by (lon1, lat1) and (lon2, lat2)
 
     """
