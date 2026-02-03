@@ -1,72 +1,53 @@
 #!/bin/bash
 #
-# traj-dist 环境安装脚本
-# 使用 pyenv Python 3.8 和最低版本依赖
+# traj-dist environment setup script
+# Uses uv to install Python 3.8 and minimal required dependencies
 #
 
-set -e  # 遇到错误立即退出
+set -e  # Exit immediately if a command exits with a non-zero status
 
 echo "========================================"
-echo "开始安装 traj-dist 开发环境"
+echo "Setting up traj-dist development environment"
 echo "========================================"
 
-# 检查 pyenv 是否可用
-if ! command -v pyenv &> /dev/null; then
-    echo "错误: pyenv 未安装"
+# Check if uv is available
+if ! command -v uv &> /dev/null; then
+    echo "Error: uv is not installed"
     exit 1
 fi
 
-# 设置 Python 3.8.20 为本地版本
+# Create virtual environment
 echo ""
-echo "步骤 1: 设置 Python 3.8.20 为本地版本..."
-pyenv install -s 3.8.20
-pyenv local 3.8.20
-echo "✓ Python 版本设置为 $(python --version)"
-
-# 创建虚拟环境
-echo ""
-echo "步骤 2: 创建虚拟环境..."
-if [ -d "venv" ]; then
-    echo "删除旧的虚拟环境..."
-    rm -rf venv
+echo "Step 1: Creating virtual environment..."
+if [ -d ".venv" ]; then
+    echo "Removing existing virtual environment..."
+    rm -rf .venv
 fi
-python -m venv .venv
-echo "✓ 虚拟环境创建成功"
+uv venv --python 3.8
+echo "✓ Virtual environment created successfully"
 
-# 升级 pip 和基础工具
+# Install dependencies
 echo ""
-echo "步骤 3: 升级 pip 和基础工具..."
-./.venv/bin/pip install -i https://mirrors.aliyun.com/pypi/simple --upgrade pip setuptools wheel
-echo "✓ pip、setuptools 和 wheel 已升级"
+echo "Step 2: Installing dependencies..."
+source .venv/bin/activate
+uv pip install 'pip==25.0.1' 'setuptools==75.3.3' 'wheel==0.45.1' 'numpy==1.17.5' 'Cython==0.29.21' 'Shapely==1.7.1' 'geohash2==1.1' 'pandas==0.25.3' 'scipy==1.3.3' 'pyarrow==2.0.0' 'pydantic==2.10.6'
+echo "✓ All dependencies installed"
 
-# 安装核心依赖（使用与 Python 3.8 兼容的最低版本）
+# Clean up old build artifacts
 echo ""
-echo "步骤 4: 安装核心依赖（numpy 和 Cython）..."
-./.venv/bin/pip install -i https://mirrors.aliyun.com/pypi/simple 'numpy==1.17.5' 'Cython==0.29.21'
-echo "✓ numpy 1.17.5 和 Cython 0.29.21 已安装"
-
-# 安装其他依赖（使用与 Python 3.8 兼容的最低版本）
-echo ""
-echo "步骤 5: 安装其他依赖..."
-./.venv/bin/pip install -i https://mirrors.aliyun.com/pypi/simple 'Shapely==1.7.1' 'geohash2==1.1' 'pandas==0.25.3' 'scipy==1.3.3' 'pyarrow==2.0.0' 'pydantic'
-echo "✓ 所有依赖已安装"
-
-# 清理旧的构建文件
-echo ""
-echo "步骤 6: 清理旧的构建文件..."
+echo "Step 3: Cleaning up old build files..."
 rm -rf build/ dist/ traj_dist.egg-info/ traj_dist/cydist/*.c traj_dist/cydist/__pycache__/*.so traj_dist/cydist/*.so
-echo "✓ 旧的构建文件已清理"
+echo "✓ Old build files removed"
 
-# 编译并安装 traj-dist
+# Build and install traj-dist
 echo ""
-echo "步骤 7: 编译并安装 traj-dist..."
-./.venv/bin/python setup.py install
-echo "✓ traj-dist 已成功编译并安装"
+echo "Step 4: Building and installing traj-dist..."
+python setup.py install
+echo "✓ traj-dist has been successfully built and installed"
 
-# 验证安装
+# Verify installation
 echo ""
-echo "步骤 8: 验证安装..."
-source ./.venv/bin/activate
+echo "Step 5: Verifying installation..."
 cd /tmp
 python -c "import traj_dist.distance as tdist"
-echo "✓ traj-dist 已成功编译并安装"
+echo "✓ traj-dist import successful — installation verified"
