@@ -30,7 +30,7 @@ echo "✓ Virtual environment created successfully"
 echo ""
 echo "Step 2: Installing dependencies..."
 source .venv/bin/activate
-uv pip install 'pip==25.0.1' 'setuptools==75.3.3' 'wheel==0.45.1' 'numpy==1.17.5' 'Cython==0.29.21' 'Shapely==1.7.1' 'geohash2==1.1' 'pandas==0.25.3' 'scipy==1.3.3' 'pyarrow==2.0.0' 'pydantic==2.10.6'
+uv pip install 'pip==25.0.1' 'setuptools==75.3.3' 'wheel==0.45.1' 'numpy==1.17.5' 'Cython==0.29.21' 'Shapely==1.7.1' 'geohash2==1.1' 'pandas==1.3.5' 'scipy==1.3.3' 'pyarrow==17.0.0' 'pydantic==2.10.6' 'polars==1.8.2'
 echo "✓ All dependencies installed"
 
 # Clean up old build artifacts
